@@ -22,6 +22,8 @@
             --white: #FFFFFF;
             --shadow: 0 4px 15px rgba(0,0,0,0.08);
             --transition: all 0.3s ease;
+            --bg-shift-y: 0px;
+            --bg-zoom: 1;
             --section-glow: radial-gradient(circle at 20% 20%, rgba(39, 174, 96, 0.15), transparent 45%),
                             radial-gradient(circle at 80% 20%, rgba(10, 61, 98, 0.12), transparent 45%);
         }
@@ -48,7 +50,17 @@
             inset: 0;
             pointer-events: none;
             background: var(--section-glow);
+            transform: translate3d(0, var(--bg-shift-y), 0) scale(var(--bg-zoom));
+            transition: transform 0.18s linear;
             z-index: -1;
+        }
+
+        body.scrolling-down::before {
+            --bg-zoom: 1.045;
+        }
+
+        body.scrolling-up::before {
+            --bg-zoom: 1.02;
         }
 
         a {
@@ -702,6 +714,8 @@
     </button>
 
     <script>
+        let lastScrollY = window.scrollY;
+
         // Sticky Navbar
         window.addEventListener('scroll', function() {
             const navbar = document.getElementById('navbar');
@@ -711,6 +725,13 @@
             const docHeight = document.documentElement.scrollHeight - window.innerHeight;
             const percent = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
             progress.style.width = `${percent}%`;
+
+            // Background motion reacts on both scroll down and up.
+            const scrollDirection = scrollTop > lastScrollY ? 'down' : 'up';
+            document.body.classList.toggle('scrolling-down', scrollDirection === 'down');
+            document.body.classList.toggle('scrolling-up', scrollDirection === 'up');
+            document.body.style.setProperty('--bg-shift-y', `${-scrollTop * 0.08}px`);
+            lastScrollY = Math.max(0, scrollTop);
 
             if (window.scrollY > 50) {
                 navbar.classList.add('sticky');
