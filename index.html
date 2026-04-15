@@ -464,6 +464,31 @@
             transform: translateY(0);
         }
 
+        .reveal-left {
+            opacity: 0;
+            transform: translateX(-40px);
+            transition: opacity 0.8s ease, transform 0.8s ease;
+        }
+
+        .reveal-right {
+            opacity: 0;
+            transform: translateX(40px);
+            transition: opacity 0.8s ease, transform 0.8s ease;
+        }
+
+        .zoom-in {
+            opacity: 0;
+            transform: scale(0.9);
+            transition: opacity 0.75s ease, transform 0.75s ease;
+        }
+
+        .reveal-left.visible,
+        .reveal-right.visible,
+        .zoom-in.visible {
+            opacity: 1;
+            transform: translateX(0) scale(1);
+        }
+
         .back-to-top {
             position: fixed;
             right: 20px;
@@ -549,7 +574,7 @@
 
     <section id="about">
         <h2 class="section-title fade-in">About <span>Me</span></h2>
-        <div class="about-text fade-in">
+        <div class="about-text reveal-left">
             <p>I am currently working as a Branch Manager at Earthwave Technology Pvt. Ltd., Ahmedabad. I specialize in helping businesses and residential clients reduce electricity bills using innovative solar energy solutions. I provide end-to-end solar services including Veda solar panels, Wave inverters, customized system design, and safe installation. Alongside my work in the renewable energy sector, I possess a strong technical background in full-stack web development, specializing in Node.js, Express, MySQL, and Next.js.</p>
         </div>
     </section>
@@ -557,7 +582,7 @@
     <section id="services">
         <h2 class="section-title fade-in">My <span>Services</span></h2>
         <div class="grid">
-            <div class="card fade-in">
+            <div class="card reveal-left">
                 <i class="fas fa-solar-panel"></i>
                 <h3>Solar Installation</h3>
                 <p>Complete end-to-end installation of highly efficient solar setups including Veda panels and Wave inverters.</p>
@@ -567,12 +592,12 @@
                 <h3>Industrial Solar Solutions</h3>
                 <p>Large-scale solar system design and integration to help factories and businesses cut operational costs.</p>
             </div>
-            <div class="card fade-in">
+            <div class="card reveal-right">
                 <i class="fas fa-home"></i>
                 <h3>Rooftop Solar Systems</h3>
                 <p>Residential rooftop solutions designed for maximum energy output and reduction in home electricity bills.</p>
             </div>
-            <div class="card fade-in">
+            <div class="card zoom-in">
                 <i class="fas fa-server"></i>
                 <h3>Node.js Backend Development</h3>
                 <p>Robust and scalable backend systems, RESTful APIs, and database architecture using Node.js and MySQL.</p>
@@ -582,7 +607,7 @@
 
     <section id="experience">
         <h2 class="section-title fade-in">Professional <span>Experience</span></h2>
-        <div class="timeline-item fade-in">
+        <div class="timeline-item reveal-left">
             <h3>Branch Manager</h3>
             <h4>Earthwave Technology Pvt. Ltd. | Ahmedabad</h4>
             <ul>
@@ -597,7 +622,7 @@
     <section id="projects">
         <h2 class="section-title fade-in">Featured <span>Projects</span></h2>
         <div class="grid">
-            <div class="card fade-in">
+            <div class="card reveal-left">
                 <div class="project-img"><i class="fas fa-image"></i> Solar Install Image</div>
                 <h3>Industrial Solar Setup</h3>
                 <p>100kW rooftop solar grid installed for a local manufacturing unit in Gujarat, reducing their grid dependency by 70%.</p>
@@ -607,7 +632,7 @@
                 <h3>Residential Veda System</h3>
                 <p>Designed and deployed a 10kW residential system utilizing Veda panels and Wave inverters for optimal energy savings.</p>
             </div>
-            <div class="card fade-in">
+            <div class="card reveal-right">
                 <div class="project-img"><i class="fas fa-code"></i> Backend Code Image</div>
                 <h3>ERP Backend System</h3>
                 <p>Developed a custom REST API using Node.js, Express, and MySQL to manage inventory and client data for solar operations.</p>
@@ -617,22 +642,22 @@
 
     <section id="skills">
         <h2 class="section-title fade-in">Technical & Business <span>Skills</span></h2>
-        <div class="skills-container fade-in">
-            <div class="skill-tag">Solar Energy</div>
-            <div class="skill-tag">Business Development</div>
-            <div class="skill-tag">Project Management</div>
-            <div class="skill-tag">Client Acquisition</div>
-            <div class="skill-tag">Node.js</div>
-            <div class="skill-tag">Express.js</div>
-            <div class="skill-tag">MySQL</div>
-            <div class="skill-tag">Next.js</div>
-            <div class="skill-tag">API Development</div>
+        <div class="skills-container fade-in" id="skillsContainer">
+            <div class="skill-tag zoom-in">Solar Energy</div>
+            <div class="skill-tag zoom-in">Business Development</div>
+            <div class="skill-tag zoom-in">Project Management</div>
+            <div class="skill-tag zoom-in">Client Acquisition</div>
+            <div class="skill-tag zoom-in">Node.js</div>
+            <div class="skill-tag zoom-in">Express.js</div>
+            <div class="skill-tag zoom-in">MySQL</div>
+            <div class="skill-tag zoom-in">Next.js</div>
+            <div class="skill-tag zoom-in">API Development</div>
         </div>
     </section>
 
     <section id="contact">
         <h2 class="section-title fade-in">Get In <span>Touch</span></h2>
-        <div class="contact-info fade-in">
+        <div class="contact-info reveal-right">
             <div class="contact-item">
                 <i class="fas fa-envelope"></i>
                 <h3>Email</h3>
@@ -702,14 +727,26 @@
         const observer = new IntersectionObserver((entries, observer) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
+                    const delay = entry.target.dataset.delay || 0;
+                    entry.target.style.transitionDelay = `${delay}ms`;
                     entry.target.classList.add('visible');
                     observer.unobserve(entry.target); // Run once
                 }
             });
         }, observerOptions);
 
-        document.querySelectorAll('.fade-in').forEach((element) => {
+        document.querySelectorAll('.fade-in, .reveal-left, .reveal-right, .zoom-in').forEach((element, index) => {
+            if (element.classList.contains('skill-tag')) {
+                element.dataset.delay = (index % 9) * 60;
+            }
             observer.observe(element);
+        });
+
+        // Hero parallax
+        const hero = document.getElementById('home');
+        window.addEventListener('scroll', () => {
+            const offset = window.scrollY * 0.25;
+            hero.style.backgroundPosition = `center calc(50% + ${offset}px)`;
         });
 
         // Active section highlighting for navbar links
