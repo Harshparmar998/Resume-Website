@@ -81,6 +81,13 @@
             position: relative;
         }
 
+        .scroll-animate {
+            opacity: 0;
+            transform: translateY(55px) scale(0.985);
+            transition: opacity 0.25s linear, transform 0.25s linear;
+            will-change: opacity, transform;
+        }
+
         .scroll-progress {
             position: fixed;
             top: 0;
@@ -572,14 +579,14 @@
         </div>
     </header>
 
-    <section id="about">
+    <section id="about" class="scroll-animate">
         <h2 class="section-title fade-in">About <span>Me</span></h2>
         <div class="about-text reveal-left">
             <p>I am currently working as a Branch Manager at Earthwave Technology Pvt. Ltd., Ahmedabad. I specialize in helping businesses and residential clients reduce electricity bills using innovative solar energy solutions. I provide end-to-end solar services including Veda solar panels, Wave inverters, customized system design, and safe installation. Alongside my work in the renewable energy sector, I possess a strong technical background in full-stack web development, specializing in Node.js, Express, MySQL, and Next.js.</p>
         </div>
     </section>
 
-    <section id="services">
+    <section id="services" class="scroll-animate">
         <h2 class="section-title fade-in">My <span>Services</span></h2>
         <div class="grid">
             <div class="card reveal-left">
@@ -605,7 +612,7 @@
         </div>
     </section>
 
-    <section id="experience">
+    <section id="experience" class="scroll-animate">
         <h2 class="section-title fade-in">Professional <span>Experience</span></h2>
         <div class="timeline-item reveal-left">
             <h3>Branch Manager</h3>
@@ -619,7 +626,7 @@
         </div>
     </section>
 
-    <section id="projects">
+    <section id="projects" class="scroll-animate">
         <h2 class="section-title fade-in">Featured <span>Projects</span></h2>
         <div class="grid">
             <div class="card reveal-left">
@@ -640,7 +647,7 @@
         </div>
     </section>
 
-    <section id="skills">
+    <section id="skills" class="scroll-animate">
         <h2 class="section-title fade-in">Technical & Business <span>Skills</span></h2>
         <div class="skills-container fade-in" id="skillsContainer">
             <div class="skill-tag zoom-in">Solar Energy</div>
@@ -655,7 +662,7 @@
         </div>
     </section>
 
-    <section id="contact">
+    <section id="contact" class="scroll-animate">
         <h2 class="section-title fade-in">Get In <span>Touch</span></h2>
         <div class="contact-info reveal-right">
             <div class="contact-item">
@@ -748,6 +755,29 @@
             const offset = window.scrollY * 0.25;
             hero.style.backgroundPosition = `center calc(50% + ${offset}px)`;
         });
+
+        // Continuous section animation while scrolling down/up
+        const scrollAnimatedSections = document.querySelectorAll('.scroll-animate');
+
+        function animateSectionsOnScroll() {
+            const viewportHeight = window.innerHeight;
+            scrollAnimatedSections.forEach((section) => {
+                const rect = section.getBoundingClientRect();
+                const start = viewportHeight * 0.95;
+                const end = viewportHeight * 0.2;
+                let progress = (start - rect.top) / (start - end);
+                progress = Math.max(0, Math.min(1, progress));
+
+                const translateY = 55 - progress * 55;
+                const scale = 0.985 + progress * 0.015;
+                section.style.opacity = progress;
+                section.style.transform = `translateY(${translateY}px) scale(${scale})`;
+            });
+        }
+
+        animateSectionsOnScroll();
+        window.addEventListener('scroll', animateSectionsOnScroll);
+        window.addEventListener('resize', animateSectionsOnScroll);
 
         // Active section highlighting for navbar links
         const sections = document.querySelectorAll('section, header');
