@@ -63,6 +63,56 @@
             --bg-zoom: 1.02;
         }
 
+        .bg-objects {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            overflow: hidden;
+            z-index: -1;
+        }
+
+        .bg-object {
+            position: absolute;
+            border-radius: 50%;
+            opacity: 0.45;
+            filter: blur(1px);
+            transform: translate3d(0, 0, 0) scale(1) rotate(0deg);
+            transition: transform 0.14s linear, opacity 0.2s ease;
+            will-change: transform;
+        }
+
+        .bg-object.one {
+            width: 180px;
+            height: 180px;
+            left: 8%;
+            top: 20%;
+            background: radial-gradient(circle at 30% 30%, rgba(138, 247, 183, 0.7), rgba(39, 174, 96, 0.14) 65%, transparent 75%);
+        }
+
+        .bg-object.two {
+            width: 250px;
+            height: 250px;
+            right: 6%;
+            top: 14%;
+            background: radial-gradient(circle at 35% 35%, rgba(30, 96, 145, 0.55), rgba(10, 61, 98, 0.12) 65%, transparent 74%);
+        }
+
+        .bg-object.three {
+            width: 120px;
+            height: 120px;
+            right: 20%;
+            top: 56%;
+            background: radial-gradient(circle at 40% 40%, rgba(39, 174, 96, 0.55), rgba(39, 174, 96, 0.12) 68%, transparent 78%);
+        }
+
+        .bg-object.four {
+            width: 210px;
+            height: 210px;
+            left: 24%;
+            bottom: 8%;
+            background: radial-gradient(circle at 30% 30%, rgba(10, 61, 98, 0.5), rgba(10, 61, 98, 0.1) 70%, transparent 80%);
+        }
+
         a {
             text-decoration: none;
             color: inherit;
@@ -563,6 +613,12 @@
 </head>
 <body>
     <div class="scroll-progress" id="scrollProgress"></div>
+    <div class="bg-objects" aria-hidden="true">
+        <span class="bg-object one" data-speed="0.16" data-rotate="0.018"></span>
+        <span class="bg-object two" data-speed="-0.11" data-rotate="-0.012"></span>
+        <span class="bg-object three" data-speed="0.23" data-rotate="0.02"></span>
+        <span class="bg-object four" data-speed="-0.07" data-rotate="-0.01"></span>
+    </div>
 
     <nav id="navbar">
         <div class="logo">Harsh Parmar</div>
@@ -715,6 +771,7 @@
 
     <script>
         let lastScrollY = window.scrollY;
+        const bgObjects = document.querySelectorAll('.bg-object');
 
         // Sticky Navbar
         window.addEventListener('scroll', function() {
@@ -731,6 +788,18 @@
             document.body.classList.toggle('scrolling-down', scrollDirection === 'down');
             document.body.classList.toggle('scrolling-up', scrollDirection === 'up');
             document.body.style.setProperty('--bg-shift-y', `${-scrollTop * 0.08}px`);
+
+            // Move background objects with different speeds for layered depth.
+            bgObjects.forEach((obj, idx) => {
+                const speed = Number(obj.dataset.speed || 0.1);
+                const rotateSpeed = Number(obj.dataset.rotate || 0.01);
+                const y = scrollTop * speed;
+                const x = Math.sin(scrollTop * 0.003 + idx) * 22;
+                const rotate = scrollTop * rotateSpeed;
+                const scale = 1 + Math.sin(scrollTop * 0.0022 + idx) * 0.07;
+                obj.style.transform = `translate3d(${x}px, ${y}px, 0) scale(${scale}) rotate(${rotate}deg)`;
+            });
+
             lastScrollY = Math.max(0, scrollTop);
 
             if (window.scrollY > 50) {
