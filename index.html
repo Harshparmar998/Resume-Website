@@ -83,9 +83,10 @@
 
         .scroll-animate {
             opacity: 0;
-            transform: translateY(55px) scale(0.985);
-            transition: opacity 0.25s linear, transform 0.25s linear;
-            will-change: opacity, transform;
+            transform: translateY(130px) scale(0.9);
+            filter: blur(8px);
+            transition: opacity 0.18s linear, transform 0.18s linear, filter 0.18s linear;
+            will-change: opacity, transform, filter;
         }
 
         .scroll-progress {
@@ -763,15 +764,19 @@
             const viewportHeight = window.innerHeight;
             scrollAnimatedSections.forEach((section) => {
                 const rect = section.getBoundingClientRect();
-                const start = viewportHeight * 0.95;
-                const end = viewportHeight * 0.2;
+                const start = viewportHeight * 1.08;
+                const end = viewportHeight * 0.08;
                 let progress = (start - rect.top) / (start - end);
                 progress = Math.max(0, Math.min(1, progress));
+                // Make motion more dramatic at entry and settle smoothly near the end.
+                const eased = 1 - Math.pow(1 - progress, 2.6);
 
-                const translateY = 55 - progress * 55;
-                const scale = 0.985 + progress * 0.015;
-                section.style.opacity = progress;
+                const translateY = 130 - eased * 130;
+                const scale = 0.9 + eased * 0.1;
+                const blur = 8 - eased * 8;
+                section.style.opacity = Math.min(1, progress * 1.2);
                 section.style.transform = `translateY(${translateY}px) scale(${scale})`;
+                section.style.filter = `blur(${blur}px)`;
             });
         }
 
